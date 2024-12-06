@@ -1,0 +1,23 @@
+{
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "corss": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.3",
+    "multer": "^1.4.5-lts.1",
+    "video.js": "^8.20.0"
+  },
+  "name": "video_streaming_ts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

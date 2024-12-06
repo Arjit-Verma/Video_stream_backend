@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HLS Video Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  </head>
+  <body>
+    <h1>HLS Video Player</h1>
+    <video id="video" controls width="640" height="360"></video>
+
+    <script>
+      const video = document.getElementById("video");
+      const videoSrc =
+        "http://localhost:4000/api/videos/stream/1733432193572/index.m3u8"; // Replace with your endpoint
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          video.play();
+        });
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // For Safari
+        video.src = videoSrc;
+        video.addEventListener("loadedmetadata", function () {
+          video.play();
+        });
+      } else {
+        alert("Your browser does not support HLS playback.");
+      }
+    </script>
+  </body>
+</html>
