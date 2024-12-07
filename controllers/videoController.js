@@ -3,6 +3,7 @@ import path from "path";
 import { exec } from "child_process";
 import { fileURLToPath } from "url";
 import Video from "../models/video.js";
+import { v4 as uuidv4 } from "uuid";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,44 +13,65 @@ export const uploadVideo = async (req, res) => {
     const { title, description } = req.body;
     const files = req.files;
 
-    const videoPath = files["video"][0].path;
-    const imagePath = files["image"][0].path;
+    const videoFile = files["video"]?.[0];
+    const imageFile = files["image"]?.[0];
 
     if (!title) return res.status(400).json({ error: "Title is required" });
-    if (!videoPath)
+    if (!videoFile)
       return res.status(400).json({ error: "No video file uploaded" });
-    if (!imagePath)
+    if (!imageFile)
       return res.status(400).json({ error: "No image file uploaded" });
 
-    const lessonId = Date.now().toString();
-    const outputPath = path.join(__dirname, "../uploads/video/slots", lessonId);
-    const hlsPath = path.join(outputPath, "index.m3u8");
+    const videoId = uuidv4();
+    const imageId = uuidv4();
 
-    fs.mkdirSync(outputPath, { recursive: true });
+    // Directories for video and image
+    const videoOutputPath = path.join(
+      __dirname,
+      "../uploads/video/slots",
+      videoId
+    );
+    const imageOutputPath = path.join(__dirname, "../uploads/images");
 
-    const ffmpegCommand = `ffmpeg -i "${videoPath}" -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 "${hlsPath}"`;
+    // Create directories
+    fs.mkdirSync(videoOutputPath, { recursive: true });
+    fs.mkdirSync(imageOutputPath, { recursive: true });
 
-    exec(ffmpegCommand, async (error, stdout, stderr) => {
+    // Video HLS Conversion
+    const hlsPath = path.join(videoOutputPath, "index.m3u8");
+    const ffmpegCommand = `ffmpeg -i "${videoFile.path}" -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${videoOutputPath}/segment%03d.ts" -start_number 0 "${hlsPath}"`;
+
+    exec(ffmpegCommand, async (error) => {
       if (error) {
         console.error(`FFmpeg error: ${error.message}`);
         return res.status(500).json({ error: "Video processing failed" });
       }
 
       try {
+        // Rename image with imageId
+        const imageExtension = path.extname(imageFile.originalname); // Get original file extension
+        const renamedImagePath = path.join(
+          imageOutputPath,
+          `${imageId}${imageExtension}`
+        );
+        fs.renameSync(imageFile.path, renamedImagePath);
+
+        // Save to database
         const video = new Video({
           title,
           description,
           videoPath: hlsPath,
-          imagePath: imagePath, // Corrected here
-          lessonId,
+          imagePath: renamedImagePath,
+          videoId,
+          imageId,
         });
 
         await video.save();
 
         res.status(201).json({
-          message: "Video uploaded and converted to HLS successfully",
-          videoUrl: `http://localhost:8000/uploads/video/${lessonId}/index.m3u8`,
-          imageUrl: `http://localhost:8000/${imagePath}`,
+          message: "Video and image uploaded successfully",
+          videoUrl: `http://localhost:8000/uploads/video/slots/${videoId}/index.m3u8`,
+          imageUrl: `http://localhost:8000/uploads/image/slots/${imageId}${imageExtension}`,
           video,
         });
       } catch (dbError) {

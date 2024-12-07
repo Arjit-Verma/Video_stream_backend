@@ -5,9 +5,12 @@ const videoSchema = new mongoose.Schema({
   description: { type: String, required: true },
   videoPath: { type: String, required: true },
   imagePath: { type: String, required: true },
-  createAt: { type: String, default: Date.now },
+  createAt: { type: Date, default: Date.now },
+  videoId: { type: String, required: true },
+  imageId: { type: String, required: true },
 });
 
-const Video = mongoose.model("Video", videoSchema);
+// Use existing model if it exists, otherwise create a new one
+const Video = mongoose.models.Video || mongoose.model("Video", videoSchema);
 
 export default Video;

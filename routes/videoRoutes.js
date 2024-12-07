@@ -4,6 +4,7 @@ import { uploadVideo, streamVideo } from "../controllers/videoController.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { getAllVideos } from "../apis/mongoDetail.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,8 @@ const upload = multer({ storage }).fields([
 ]);
 
 const router = express.Router();
+
+router.get("/allvideo", getAllVideos);
 router.post("/upload", upload, uploadVideo);
 router.get("/stream/:id/:file", streamVideo);
 

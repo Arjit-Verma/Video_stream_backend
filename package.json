@@ -5,8 +5,10 @@
     "corss": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
+    "mongodb": "^6.11.0",
     "mongoose": "^8.8.3",
     "multer": "^1.4.5-lts.1",
+    "uuid": "^11.0.3",
     "video.js": "^8.20.0"
   },
   "name": "video_streaming_ts",
