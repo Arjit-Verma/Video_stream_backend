@@ -39,7 +39,14 @@ export const uploadVideo = async (req, res) => {
 
     // Video HLS Conversion
     const hlsPath = path.join(videoOutputPath, "index.m3u8");
-    const ffmpegCommand = `ffmpeg -i "${videoFile.path}" -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${videoOutputPath}/segment%03d.ts" -start_number 0 "${hlsPath}"`;
+    const ffmpegCommand = `ffmpeg -i "${videoFile.path}" \
+-codec:v libx264 -preset ultrafast -crf 28 \
+-codec:a aac -b:a 64k \
+-hls_time 30 -hls_playlist_type vod \
+-hls_segment_filename "${videoOutputPath}/segment%03d.ts" \
+-threads 2 \
+-start_number 0 \
+"${hlsPath}"`;
 
     exec(ffmpegCommand, async (error) => {
       if (error) {
