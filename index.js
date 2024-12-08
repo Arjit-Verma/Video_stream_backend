@@ -7,7 +7,12 @@ import videoRoutes from "./routes/videoRoutes.js";
 const app = express();
 
 connectDB();
+app.use(express.static(path.join(__dirname, "public")));
+
 //using cors middleware for security and adding headers and other stuff
+app.get("/watchIt", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 app.use(cors());
 app.use(express.json());
 app.use("/api/videos", videoRoutes);
