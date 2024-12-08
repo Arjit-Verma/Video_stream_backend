@@ -6,7 +6,6 @@ import connectDB from "./config/db.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import Video from "../models/video.js";
 
 const app = express();
 
@@ -20,17 +19,15 @@ app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads/video/slots"))
 );
+
 // Route to serve the index.html file
 app.get("/watchIt", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Middleware
-app.use(
-  cors({
-    origin: "https://video-stream-backend-74hn.onrender.com", // Replace with your actual domain
-  })
-);
+app.use(cors());
+
 app.use(express.json());
 app.use("/api/videos", videoRoutes);
 
