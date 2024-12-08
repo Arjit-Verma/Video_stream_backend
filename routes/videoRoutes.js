@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import { getAllVideos } from "../apis/mongoDetail.js";
-import { Video } from "../models/video.js";
+import Video from "../models/video.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,5 +53,4 @@ router.get("/list", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch video list" });
   }
 });
-
 export default router;
