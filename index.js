@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import Video from "../models/video.js";
 
 const app = express();
 
