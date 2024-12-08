@@ -3,34 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HLS Video Test</title>
+    <title>HLS Video Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   </head>
   <body>
     <h1>HLS Video Player</h1>
+    <div>
+      <select id="videoSelect">
+        <option value="">Select a video</option>
+      </select>
+    </div>
     <video id="video" controls width="640" height="360"></video>
 
     <script>
-      const video = document.getElementById("video");
-      const videoSrc =
-        "https://video-stream-backend-74hn.onrender.com/api/videos/stream/f920ef88-ed8d-441b-9d7d-277d56ceeee7/index.m3u8"; // Replace with your endpoint
+      // API URL to fetch the video list
+      const videoListApi = "http://localhost:4000/api/videos/list"; // Replace with your API endpoint
+      const videoSelect = document.getElementById("videoSelect");
+      const videoElement = document.getElementById("video");
 
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          video.play();
+      // Fetch and display video list
+      fetch(videoListApi)
+        .then((response) => {
+          console.log("Fetch response received", response);
+          if (!response.ok) {
+            // Log more detailed error information
+            return response.text().then((errorText) => {
+              throw new Error(
+                `HTTP error! status: ${response.status}, message: ${errorText}`
+              );
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Video list data:", data);
+          // Ensure the data structure matches what you expect
+          if (data && data.videos && Array.isArray(data.videos)) {
+            data.videos.forEach((video) => {
+              console.log("Adding video to dropdown:", video);
+              const option = document.createElement("option");
+              option.value = video.videoId;
+              option.textContent = video.title;
+              videoSelect.appendChild(option);
+            });
+          } else {
+            console.error("Unexpected data format:", data);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching video list:", err);
+          alert(`Failed to load video list: ${err.message}`);
         });
-      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        // For Safari
-        video.src = videoSrc;
-        video.addEventListener("loadedmetadata", function () {
-          video.play();
-        });
-      } else {
-        alert("Your browser does not support HLS playback.");
-      }
+
+      // Play selected video
+      videoSelect.addEventListener("change", () => {
+        const videoId = videoSelect.value;
+        if (!videoId) return;
+
+        const videoSrc = `http://localhost:4000/api/videos/stream/${videoId}/index.m3u8`; // Adjust your endpoint
+
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(videoSrc);
+          hls.attachMedia(videoElement);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            videoElement.play();
+          });
+        } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+          // For Safari
+          videoElement.src = videoSrc;
+          videoElement.addEventListener("loadedmetadata", () => {
+            videoElement.play();
+          });
+        } else {
+          alert("Your browser does not support HLS playback.");
+        }
+      });
     </script>
   </body>
 </html>

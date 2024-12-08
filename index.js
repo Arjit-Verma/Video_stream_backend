@@ -14,8 +14,16 @@ connectDB();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const options = {
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
+};
+
 // Serve static files (videos, HLS files, etc.)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads/video/slots"))
+);
 // Route to serve the index.html file
 app.get("/watchIt", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));

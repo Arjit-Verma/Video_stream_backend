@@ -42,5 +42,15 @@ const router = express.Router();
 router.get("/allvideo", getAllVideos);
 router.post("/upload", upload, uploadVideo);
 router.get("/stream/:id/:file", streamVideo);
+router.get("/list", async (req, res) => {
+  try {
+    // Retrieve all videos from the database
+    const videos = await Video.find({}, "title videoId");
+    res.json({ videos, message: "fuck you" }); // Send as JSON response
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    res.status(500).json({ error: "Failed to fetch video list" });
+  }
+});
 
 export default router;
