@@ -14,11 +14,6 @@ connectDB();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const options = {
-  key: fs.readFileSync("server.key"),
-  cert: fs.readFileSync("server.cert"),
-};
-
 // Serve static files (videos, HLS files, etc.)
 app.use(
   "/uploads",

@@ -17,7 +17,8 @@
 
     <script>
       // API URL to fetch the video list
-      const videoListApi = "http://localhost:4000/api/videos/list"; // Replace with your API endpoint
+      const videoListApi =
+        "https://video-stream-backend-74hn.onrender.com/api/videos/list"; // Replace with your API endpoint
       const videoSelect = document.getElementById("videoSelect");
       const videoElement = document.getElementById("video");
 
@@ -60,7 +61,7 @@
         const videoId = videoSelect.value;
         if (!videoId) return;
 
-        const videoSrc = `http://localhost:4000/api/videos/stream/${videoId}/index.m3u8`; // Adjust your endpoint
+        const videoSrc = `https://video-stream-backend-74hn.onrender.com/api/videos/stream/${videoId}/index.m3u8`; // Adjust your endpoint
 
         if (Hls.isSupported()) {
           const hls = new Hls();
