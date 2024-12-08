@@ -25,7 +25,11 @@ app.get("/watchIt", (req, res) => {
 });
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://video-stream-backend-74hn.onrender.com", // Replace with your actual domain
+  })
+);
 app.use(express.json());
 app.use("/api/videos", videoRoutes);
 
