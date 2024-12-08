@@ -11,7 +11,6 @@ const app = express();
 connectDB();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
 
 //using cors middleware for security and adding headers and other stuff
 app.get("/watchIt", (req, res) => {
