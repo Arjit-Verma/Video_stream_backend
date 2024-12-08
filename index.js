@@ -4,9 +4,13 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import videoRoutes from "./routes/videoRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 const app = express();
 
 connectDB();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "public")));
 
 //using cors middleware for security and adding headers and other stuff
