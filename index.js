@@ -15,8 +15,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve static files (videos, HLS files, etc.)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads/video/slots"))
+);
 // Route to serve the index.html file
 app.get("/watchIt", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
